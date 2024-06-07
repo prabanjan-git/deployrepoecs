@@ -26,7 +26,7 @@ jobs:
         with:
           mask-password: false  # Set to false to not mask the Docker password (can be set to true for security)
           registry-type: private  # Specify the registry type as private
-          skip-logout: True  # Set to false to ensure logout after the action completes
+          skip-logout: false  # Set to false to ensure logout after the action completes
 
       - name: Create ECR repository if it does not exist
         run: |
@@ -59,4 +59,4 @@ jobs:
           SERVICE_NAME: example-service
           IMAGE_TAG: ${{ github.sha }}
         run: |
-          aws ecs update-service --cluster my-cluster --service my-service --force-new-deployment   
+          aws ecs update-service --cluster $CLUSTER_NAME --service $SERVICE_NAME --force-new-deployment --task-definition $(aws ecs describe-task-definition --task-definition example-task | jq -r ".taskDefinition.taskDefinitionArn")    
